@@ -12,7 +12,7 @@
    width="48"
    height="48"
    id="svg4296"
-   sodipodi:docname="icon.svg"
+   sodipodi:docname="utilities-terminal.svg"
    inkscape:version="1.0.2 (e86c870879, 2021-01-15)">
   <sodipodi:namedview
      pagecolor="#ffffff"
@@ -36,26 +36,13 @@
      inkscape:window-x="0"
      inkscape:window-y="30"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg4296"
-     inkscape:document-rotation="0">
+     inkscape:current-layer="svg4296">
     <inkscape:grid
        type="xygrid"
        id="grid863" />
   </sodipodi:namedview>
   <defs
      id="defs4298">
-    <linearGradient
-       inkscape:collect="always"
-       id="linearGradient877">
-      <stop
-         style="stop-color:#000000;stop-opacity:1;"
-         offset="0"
-         id="stop873" />
-      <stop
-         style="stop-color:#000000;stop-opacity:0;"
-         offset="1"
-         id="stop875" />
-    </linearGradient>
     <linearGradient
        id="linearGradient3895">
       <stop
@@ -170,15 +157,6 @@
          style="stop-color:#0c1011;stop-opacity:1"
          offset="1" />
     </linearGradient>
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient877"
-       id="linearGradient879"
-       x1="12.869716"
-       y1="29.081477"
-       x2="34.869711"
-       y2="29.081477"
-       gradientUnits="userSpaceOnUse" />
   </defs>
   <metadata
      id="metadata4301">
@@ -248,8 +226,7 @@
      style="opacity:0.3;fill:none;stroke:url(#linearGradient3024);stroke-width:0.99999994;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
   <g
      id="g909"
-     transform="translate(0.13028343,-0.95886882)"
-     style="fill-opacity:1;fill:#ffffff">
+     transform="translate(0.13028343,-0.95886882)">
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:23.7769px;line-height:1.25;font-family:sans-serif;letter-spacing:-2.97211px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.990704;stroke-miterlimit:4;stroke-dasharray:none"
