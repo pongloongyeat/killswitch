@@ -1,12 +1,11 @@
-![screenshot](screenshot.png)
-
 # KillSwitch
 
-Kills all applications. An attempt at making a simple app in Python in one file. Requires Gtk3 and Granite.
+Kills all applications. An attempt at making a simple one file app in Python.
 
+![screenshot](screenshot.png)
 ## Running
 
-Requires Python3. Run with `python3 KillSwitch` or set as executable and run via
+Requires Python3, Gtk3 and Granite. Run with `python3 KillSwitch` or set as executable and run via
 
 ```bash
 chmod +x KillSwitch
@@ -33,4 +32,5 @@ Manual:
 Type=Application
 Name[en_US]=KillSwitch
 Exec=/path/to/KillSwitch
+Icon=/path/to/icon.svg
 ```
