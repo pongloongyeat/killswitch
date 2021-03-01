@@ -1,0 +1,228 @@
+#!/usr/bin/python3
+
+"""
+* Copyright 2021 Pong Loong Yeat (https://github.com/pongloongyeat/KillSwitch)
+*
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public
+* License as published by the Free Software Foundation; either
+* version 3 of the License, or (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* General Public License for more details.
+*
+* You should have received a copy of the GNU General Public
+* License along with this program; if not, write to the
+* Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+* Boston, MA 02110-1301 USA
+"""
+
+import os
+import gi
+
+gi.require_version("Gtk", "3.0")
+gi.require_version("Gio", "2.0")
+gi.require_version("Granite", "1.0")
+from gi.repository import Gtk
+from gi.repository import Gio
+from gi.repository import Granite
+
+class MainWindow(Gtk.Window):
+    def __init__(self):
+        Gtk.Window.__init__(self, title="KillSwitch")
+
+        self.gtk_settings = Gtk.Settings.get_default()
+        self.granite_settings = Granite.Settings.get_default()
+
+        self.set_colour_scheme()
+        self.granite_settings.connect("notify::prefers-color-scheme", self.set_colour_scheme)
+
+        self.set_size_request(480, 320)
+        self.set_default_size(480, 320)
+        self.props.resizable = False
+
+        notify_label = Gtk.Label.new("The following processes will be attempted to be killed:")
+        notify_label.props.xalign = 0
+
+        self.list_store = Gtk.ListStore(bool, str)
+        tree_view = Gtk.TreeView.new_with_model(self.list_store)
+        tree_view.props.expand = True
+
+        toggle_renderer = Gtk.CellRendererToggle.new()
+        toggle_renderer.connect("toggled", self.on_cell_toggled)
+
+        tree_view.insert_column_with_attributes(
+            0, "Kill",
+            toggle_renderer,
+            active=0
+        )
+        tree_view.insert_column_with_attributes(
+            1, "Process name",
+            Gtk.CellRendererText.new(),
+            text=1
+        )
+
+        self.populate_list_store()
+
+        scrolled = Gtk.ScrolledWindow.new()
+        scrolled.add(tree_view)
+
+        tree_frame = Gtk.Frame.new()
+        tree_frame.add(scrolled)
+
+        self.kill_btn = Gtk.Button.new_with_label("Kill")
+        self.kill_btn.get_style_context().add_class(Gtk.STYLE_CLASS_DESTRUCTIVE_ACTION);
+
+        box = Gtk.ButtonBox.new(Gtk.Orientation.HORIZONTAL)
+        box.props.layout_style = Gtk.ButtonBoxStyle.END
+        box.add(self.kill_btn)
+
+        grid = Gtk.Grid(
+            orientation=Gtk.Orientation.VERTICAL,
+            row_spacing=6,
+            margin=12
+        )
+
+        grid.add(notify_label)
+        grid.add(tree_frame)
+        grid.add(box)
+
+        self.add(grid)
+
+        self.kill_btn.connect("clicked", self.on_kill_btn_clicked)
+
+    """
+    Most work happens here. This is where we gather the list of apps
+    we want to kill. This just checks for any apps in
+    /usr/share/applications and adds them to a list to be attempted
+    to be killed.
+    """
+    def get_app_list(self):
+        desktop_files = os.listdir("/usr/share/applications")
+        desktop_files.sort()
+        app_list = []
+        exec_list = []
+
+        for desktop_file in desktop_files:
+            if ".desktop" in desktop_file:
+                try:
+                    desktop_app_info = Gio.DesktopAppInfo.new(desktop_file)
+
+                    # Applications are the ones that are only
+                    # shown in the Applications Menu. Applications
+                    # also shouldn't open in Terminal.
+                    if not desktop_app_info.get_nodisplay () and desktop_app_info.get_string("Terminal") != "true":
+                        app_info = AppInfo(
+                            desktop_app_info.get_string("Exec"),
+                            desktop_app_info.get_string("Icon")
+                        )
+
+                        # Check to make sure no duplicate entries and skip io.elementary.tasks as it causes a crash for some reason
+                        if app_info.exec_name not in exec_list and app_info.exec_name != "io.elementary.tasks":
+                            exec_list.append(app_info.exec_name)
+                            app_list.append(app_info)
+                except:
+                    pass
+
+        return app_list
+
+    def populate_list_store(self):
+        self.app_list = self.get_app_list()
+
+        for app_info in self.app_list:
+            self.list_store.append([app_info.to_kill, app_info.exec_name])
+
+    def set_colour_scheme(self, *args, **kwargs):
+        self.gtk_settings.props.gtk_application_prefer_dark_theme = (
+            self.granite_settings.props.prefers_color_scheme == Granite.SettingsColorScheme.DARK
+        )
+
+    def show_message_dialog(self):
+        self.message_dialog = Granite.MessageDialog.with_image_from_icon_name(
+            primary_text="Are you sure you want to proceed?",
+            secondary_text="This will kill all selected processes. Please save your work before proceeding.",
+            image_icon_name="dialog-warning",
+            buttons=Gtk.ButtonsType.CANCEL
+        )
+
+        suggested_button = Gtk.Button.new_with_label("Proceed")
+        suggested_button.get_style_context().add_class(Gtk.STYLE_CLASS_DESTRUCTIVE_ACTION)
+        self.message_dialog.add_action_widget(suggested_button, Gtk.ResponseType.ACCEPT)
+
+        self.message_dialog.props.transient_for = self;
+
+        self.message_dialog.connect("response", self.on_response)
+        self.message_dialog.show_all();
+
+    def on_response(self, dialog, response_id):
+        if response_id == Gtk.ResponseType.ACCEPT:
+            for app_info in self.app_list: app_info.kill()
+            self.destroy()
+        else:
+            self.message_dialog.destroy()
+
+    def on_cell_toggled(self, widget, path):
+        self.app_list[int(path)].to_kill = not self.app_list[int(path)].to_kill
+        self.list_store[path][0] = not self.list_store[path][0]
+
+    def on_kill_btn_clicked(self, button):
+        self.show_message_dialog()
+
+class AppInfo:
+    DEFAULT_NO_KILL = [
+        "evolution-alarm-notify",
+        "gala",
+        "mutter",
+        "pantheon-parental-controls-client",
+        "io.elementary.tasks"       # This causes a crash idk why
+    ]
+
+    def __init__(self, exec_raw, icon_name):
+        self.exec_raw = exec_raw    # Un-sanitised "Exec" parameter
+        self.exec_name = self.sanitise_exec(exec_raw)
+        self.icon_name = icon_name
+        self.to_kill = self.should_kill()
+
+    def sanitise_exec(self, exec_raw):
+        # Remove args and path
+        return exec_raw.split(" ")[0].split("/")[-1]
+
+    def is_elementary(self):
+        return ("io.elementary" in self.exec_name or
+                "pantheon" in self.exec_name or
+                self.exec_name in ["gala", "plank"])
+
+    def is_lib(self):
+        return "lib" in self.exec_name
+
+    def is_agent(self):
+        return "agent" in self.exec_name
+
+    def is_daemon(self):
+        return "daemon" in self.exec_name
+
+    # Not sure if naming is right here
+    def is_service(self):
+        return "bus" in self.exec_name
+
+    def should_kill(self):
+        if self.exec_name in self.DEFAULT_NO_KILL:
+            return False
+
+        # Ignore libraries, agents and daemons
+        if self.is_lib() or self.is_agent() or self.is_daemon() or self.is_service():
+            return False
+
+        return True
+
+    def kill(self):
+        if self.to_kill is True:
+            os.system("echo Killing process {}...".format(self.exec_name))
+            os.system("killall {}".format(self.exec_name))
+
+win = MainWindow()
+win.connect("destroy", Gtk.main_quit)
+win.show_all()
+Gtk.main()
