@@ -75,10 +75,8 @@ class MainWindow(Gtk.Window):
                 try:
                     desktop_app_info = Gio.DesktopAppInfo.new(desktop_file)
 
-                    # Applications are the ones that are only
-                    # shown in the Applications Menu. Applications
-                    # also shouldn't open in Terminal.
-                    if not desktop_app_info.get_nodisplay () and desktop_app_info.get_string("Terminal") != "true":
+                    # Exclude apps that launch in terminal.
+                    if desktop_app_info.get_string("Terminal") != "true":
                         app_info = AppInfo(
                             desktop_app_info.get_string("Exec"),
                             desktop_app_info.get_string("Icon")
