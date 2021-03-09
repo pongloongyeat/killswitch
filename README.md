@@ -5,33 +5,28 @@
 
 Kills all applications. An attempt at making a simple one file app in Python.
 
-## Running
+## Building
 
-Requires Python3, GTK3 and Granite. Run with `python3 KillSwitch` or set as executable and run via
+Requires Python3, GTK3 and Granite. Right click on KillSwitch and select 'Run'.
 
-```bash
-chmod +x KillSwitch
-./KillSwitch
-```
-
-## Installing
+## Adding to Applications Menu
 
 Recommended:
 
 1. Install [AppEditor](https://github.com/donadigo/appeditor).
-2. Download KillSwitch (recommended to store somewhere where it won't be accidentally deleted, i.e. in `~/Scripts` for instance).
+2. Download KillSwitch (store it somewhere where it won't be accidentally deleted, i.e. in `~/Scripts` for instance).
 3. Right click on KillSwitch and select "Create a Menu Entry".
 4. Configure it however you want.
 
 Manual:
 
-1. Download KillSwitch (recommended to store somewhere where it won't be accidentally deleted, i.e. in `~/Scripts` for instance).
+1. Download KillSwitch (store it somewhere where it won't be accidentally deleted, i.e. in `~/Scripts` for instance).
 2. Create a `com.github.pongloongyeat.killswitch.desktop` file in `~/.local/share/applications` with the following
 
 ```
 [Desktop Entry]
 Type=Application
-Name[en_US]=KillSwitch
+Name=KillSwitch
 Exec=/path/to/KillSwitch
 Icon=/path/to/icon.svg
 ```
