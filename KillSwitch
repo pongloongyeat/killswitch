@@ -167,6 +167,9 @@ class AppInfo:
     def is_service(self):
         return "bus" in self.exec_name
 
+    def is_desktop_component(self):
+        return self.exec_name in ["io.elementary.wingpanel", "plank"]
+
     def should_kill(self):
         if self.exec_name in self.DEFAULT_NO_KILL:
             return False
