@@ -47,6 +47,8 @@ class MainWindow(Gtk.Window):
         welcome.append ("application-default-icon", "Applications", "Kills all running user-installed applications.");
         welcome.append ("preferences-desktop-wallpaper", "Desktop components", "Kills the dock and top bar.");
 
+        welcome.connect("activated", self.on_welcome_click);
+
         self.add(welcome)
 
 
@@ -90,6 +92,45 @@ class MainWindow(Gtk.Window):
                     pass
 
         return app_list
+
+    def show_message_dialog(self, on_response, primary_text="", secondary_text=""):
+        message_dialog = Granite.MessageDialog.with_image_from_icon_name(
+            primary_text=primary_text,
+            secondary_text=secondary_text,
+            image_icon_name="dialog-warning",
+            buttons=Gtk.ButtonsType.CANCEL
+        )
+
+        suggested_button = Gtk.Button.new_with_label("Proceed")
+        suggested_button.get_style_context().add_class(Gtk.STYLE_CLASS_DESTRUCTIVE_ACTION)
+        message_dialog.add_action_widget(suggested_button, Gtk.ResponseType.ACCEPT)
+
+        message_dialog.props.transient_for = self;
+
+        message_dialog.connect("response", on_response)
+        message_dialog.show_all();
+
+    def on_welcome_click(self, widget, index, *args):
+        if index == 0:
+            self.show_message_dialog(
+                self.on_app_response,
+                "Are you sure you want to proceed?",
+                "This will kill all running applications. Please save your work before proceeding."
+            )
+        elif index == 1:
+            self.show_message_dialog(
+                self.on_desktop_response,
+                "Are you sure you want to proceed",
+                "This will kill the dock and top bar. If they are killed again within the next 120s, they will not automatically relaunch."
+            )
+        else:
+            pass
+
+    def on_app_response(self):
+        pass
+
+    def on_desktop_response(self):
+        pass
 
 class AppInfo:
     DEFAULT_NO_KILL = [
