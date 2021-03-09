@@ -43,55 +43,18 @@ class MainWindow(Gtk.Window):
         self.set_default_size(480, 320)
         self.props.resizable = False
 
-        notify_label = Gtk.Label.new("The following processes will be attempted to be killed:")
-        notify_label.props.xalign = 0
+        welcome = Granite.WidgetsWelcome.new("KillSwitch", "Kills running processes")
+        welcome.append ("application-default-icon", "Applications", "Kills all running user-installed applications.");
+        welcome.append ("preferences-desktop-wallpaper", "Desktop components", "Kills the dock and top bar.");
 
-        self.list_store = Gtk.ListStore(bool, str)
-        tree_view = Gtk.TreeView.new_with_model(self.list_store)
-        tree_view.props.expand = True
+        self.add(welcome)
 
-        toggle_renderer = Gtk.CellRendererToggle.new()
-        toggle_renderer.connect("toggled", self.on_cell_toggled)
 
-        tree_view.insert_column_with_attributes(
-            0, "Kill",
-            toggle_renderer,
-            active=0
-        )
-        tree_view.insert_column_with_attributes(
-            1, "Process name",
-            Gtk.CellRendererText.new(),
-            text=1
+    def set_colour_scheme(self, *args, **kwargs):
+        self.gtk_settings.props.gtk_application_prefer_dark_theme = (
+            self.granite_settings.props.prefers_color_scheme == Granite.SettingsColorScheme.DARK
         )
 
-        self.populate_list_store()
-
-        scrolled = Gtk.ScrolledWindow.new()
-        scrolled.add(tree_view)
-
-        tree_frame = Gtk.Frame.new()
-        tree_frame.add(scrolled)
-
-        self.kill_btn = Gtk.Button.new_with_label("Kill")
-        self.kill_btn.get_style_context().add_class(Gtk.STYLE_CLASS_DESTRUCTIVE_ACTION);
-
-        box = Gtk.ButtonBox.new(Gtk.Orientation.HORIZONTAL)
-        box.props.layout_style = Gtk.ButtonBoxStyle.END
-        box.add(self.kill_btn)
-
-        grid = Gtk.Grid(
-            orientation=Gtk.Orientation.VERTICAL,
-            row_spacing=6,
-            margin=12
-        )
-
-        grid.add(notify_label)
-        grid.add(tree_frame)
-        grid.add(box)
-
-        self.add(grid)
-
-        self.kill_btn.connect("clicked", self.on_kill_btn_clicked)
 
     """
     Most work happens here. This is where we gather the list of apps
@@ -127,48 +90,6 @@ class MainWindow(Gtk.Window):
                     pass
 
         return app_list
-
-    def populate_list_store(self):
-        self.app_list = self.get_app_list()
-
-        for app_info in self.app_list:
-            self.list_store.append([app_info.to_kill, app_info.exec_name])
-
-    def set_colour_scheme(self, *args, **kwargs):
-        self.gtk_settings.props.gtk_application_prefer_dark_theme = (
-            self.granite_settings.props.prefers_color_scheme == Granite.SettingsColorScheme.DARK
-        )
-
-    def show_message_dialog(self):
-        self.message_dialog = Granite.MessageDialog.with_image_from_icon_name(
-            primary_text="Are you sure you want to proceed?",
-            secondary_text="This will kill all selected processes. Please save your work before proceeding.",
-            image_icon_name="dialog-warning",
-            buttons=Gtk.ButtonsType.CANCEL
-        )
-
-        suggested_button = Gtk.Button.new_with_label("Proceed")
-        suggested_button.get_style_context().add_class(Gtk.STYLE_CLASS_DESTRUCTIVE_ACTION)
-        self.message_dialog.add_action_widget(suggested_button, Gtk.ResponseType.ACCEPT)
-
-        self.message_dialog.props.transient_for = self;
-
-        self.message_dialog.connect("response", self.on_response)
-        self.message_dialog.show_all();
-
-    def on_response(self, dialog, response_id):
-        if response_id == Gtk.ResponseType.ACCEPT:
-            for app_info in self.app_list: app_info.kill()
-            self.destroy()
-        else:
-            self.message_dialog.destroy()
-
-    def on_cell_toggled(self, widget, path):
-        self.app_list[int(path)].to_kill = not self.app_list[int(path)].to_kill
-        self.list_store[path][0] = not self.list_store[path][0]
-
-    def on_kill_btn_clicked(self, button):
-        self.show_message_dialog()
 
 class AppInfo:
     DEFAULT_NO_KILL = [
