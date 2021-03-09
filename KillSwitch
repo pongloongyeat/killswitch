@@ -78,8 +78,7 @@ class MainWindow(Gtk.Window):
                     # Exclude apps that launch in terminal.
                     if desktop_app_info.get_string("Terminal") != "true":
                         app_info = AppInfo(
-                            desktop_app_info.get_string("Exec"),
-                            desktop_app_info.get_string("Icon")
+                            desktop_app_info.get_string("Exec")
                         )
 
                         # Check to make sure no duplicate entries
@@ -124,11 +123,21 @@ class MainWindow(Gtk.Window):
         else:
             pass
 
-    def on_app_response(self):
-        pass
+    def on_app_response(self, dialog, response_id):
+        if response_id == Gtk.ResponseType.ACCEPT:
+            for app_info in self.get_app_list():
+                if not app_info.is_desktop_component():
+                    app_info.kill()
 
-    def on_desktop_response(self):
-        pass
+        dialog.destroy()
+
+    def on_desktop_response(self, dialog, response_id):
+        if response_id == Gtk.ResponseType.ACCEPT:
+            for app_info in self.get_app_list():
+                if app_info.is_desktop_component():
+                    app_info.kill()
+
+        dialog.destroy()
 
 class AppInfo:
     DEFAULT_NO_KILL = [
@@ -138,12 +147,9 @@ class AppInfo:
         "pantheon-parental-controls-client",
     ]
 
-    def __init__(self, exec_raw, icon_name):
+    def __init__(self, exec_raw):
         self.exec_raw = exec_raw    # Un-sanitised "Exec" parameter
         self.exec_name = self.sanitise_exec(exec_raw)
-        self.icon_name = icon_name
-        self.to_kill = self.should_kill()
-        self.failed = False
 
     def sanitise_exec(self, exec_raw):
         # Remove args and path
@@ -181,12 +187,9 @@ class AppInfo:
         return True
 
     def kill(self):
-        if self.to_kill is True:
-            try:
-                os.system("killall {}".format(self.exec_name))
-            except:
-                print("Process {} could not be killed".format(self.exec_name))
-                self.failed = True
+        if self.should_kill() is True:
+            print("Killing {}".format(self.exec_name))
+            os.system("pkill {}".format(self.exec_name))
 
 win = MainWindow()
 win.connect("destroy", Gtk.main_quit)
