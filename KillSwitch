@@ -82,8 +82,8 @@ class MainWindow(Gtk.Window):
                             desktop_app_info.get_string("Icon")
                         )
 
-                        # Check to make sure no duplicate entries and skip io.elementary.tasks as it causes a crash for some reason
-                        if app_info.exec_name not in exec_list and app_info.exec_name != "io.elementary.tasks":
+                        # Check to make sure no duplicate entries
+                        if app_info.exec_name not in exec_list:
                             exec_list.append(app_info.exec_name)
                             app_list.append(app_info)
                 except:
@@ -97,7 +97,6 @@ class AppInfo:
         "gala",
         "mutter",
         "pantheon-parental-controls-client",
-        "io.elementary.tasks"       # This causes a crash idk why
     ]
 
     def __init__(self, exec_raw, icon_name):
@@ -105,6 +104,7 @@ class AppInfo:
         self.exec_name = self.sanitise_exec(exec_raw)
         self.icon_name = icon_name
         self.to_kill = self.should_kill()
+        self.failed = False
 
     def sanitise_exec(self, exec_raw):
         # Remove args and path
@@ -140,8 +140,11 @@ class AppInfo:
 
     def kill(self):
         if self.to_kill is True:
-            os.system("echo Killing process {}...".format(self.exec_name))
-            os.system("killall {}".format(self.exec_name))
+            try:
+                os.system("killall {}".format(self.exec_name))
+            except:
+                print("Process {} could not be killed".format(self.exec_name))
+                self.failed = True
 
 win = MainWindow()
 win.connect("destroy", Gtk.main_quit)
