@@ -12,7 +12,7 @@
    height="64"
    width="64"
    version="1.1"
-   sodipodi:docname="64(2).svg"
+   sodipodi:docname="icon.svg"
    inkscape:version="1.0.2 (e86c870879, 2021-01-15)">
   <sodipodi:namedview
      pagecolor="#ffffff"
@@ -27,13 +27,14 @@
      inkscape:window-height="792"
      id="namedview112"
      showgrid="true"
-     inkscape:zoom="3.4733313"
-     inkscape:cx="50.104134"
-     inkscape:cy="23.53616"
+     inkscape:zoom="21.37067"
+     inkscape:cx="41.912482"
+     inkscape:cy="11.592533"
      inkscape:window-x="124"
      inkscape:window-y="30"
      inkscape:window-maximized="0"
-     inkscape:current-layer="svg4389">
+     inkscape:current-layer="svg4389"
+     inkscape:document-rotation="0">
     <inkscape:grid
        type="xygrid"
        id="grid114" />
@@ -683,8 +684,9 @@
      sodipodi:nodetypes="cccccc" />
   <path
      style="display:inline;opacity:0.2;fill:none;stroke:#ffffff;stroke-width:1px;stroke-linecap:round"
-     d="M 6,4.5 H 59"
-     id="path38357" />
+     d="m 6,4.5 h 20 m 14,0 h 19"
+     id="path38357"
+     sodipodi:nodetypes="cccc" />
   <path
      id="path3434"
      style="color:#000000;display:inline;opacity:0.2;isolation:auto;mix-blend-mode:normal;solid-color:#000000;fill:none;stroke:#000000;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto"
