@@ -44,10 +44,10 @@ class MainWindow(Gtk.Window):
         self.props.resizable = False
 
         welcome = Granite.WidgetsWelcome.new("KillSwitch", "Kills running processes")
-        welcome.append ("application-default-icon", "Applications", "Kills all running user-installed applications.");
-        welcome.append ("preferences-desktop-wallpaper", "Desktop components", "Kills the dock and top bar.");
+        welcome.append("application-default-icon", "Applications", "Kills all running user-installed applications.")
+        welcome.append("preferences-desktop-wallpaper", "Desktop components", "Kills the dock and top bar.")
 
-        welcome.connect("activated", self.on_welcome_click);
+        welcome.connect("activated", self.on_welcome_click)
 
         self.add(welcome)
 
@@ -102,10 +102,10 @@ class MainWindow(Gtk.Window):
         suggested_button.get_style_context().add_class(Gtk.STYLE_CLASS_DESTRUCTIVE_ACTION)
         message_dialog.add_action_widget(suggested_button, Gtk.ResponseType.ACCEPT)
 
-        message_dialog.props.transient_for = self;
+        message_dialog.props.transient_for = self
 
         message_dialog.connect("response", on_response)
-        message_dialog.show_all();
+        message_dialog.show_all()
 
     def on_welcome_click(self, widget, index, *args):
         if index == 0:
