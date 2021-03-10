@@ -3,6 +3,8 @@
 
 ![screenshot](screenshot.png?raw=true)
 
+Inspired by [killall](https://www.reddit.com/r/MacOS/comments/lt1vlh/a_simple_automator_app_with_an_intuitive_icon/).
+
 Kills all applications. An attempt at making a simple one file app in Python.
 
 ## Running
