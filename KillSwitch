@@ -76,9 +76,9 @@ class MainWindow(Gtk.Window):
                     desktop_app_info = Gio.DesktopAppInfo.new(desktop_file)
 
                     # Exclude apps that launch in terminal.
-                    if desktop_app_info.get_string("Terminal") != "true":
+                    if not desktop_app_info.get_boolean("Terminal"):
                         app_info = AppInfo(
-                            desktop_app_info.get_string("Exec")
+                            desktop_app_info.get_executable()
                         )
 
                         # Check to make sure no duplicate entries
