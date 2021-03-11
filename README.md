@@ -1,4 +1,4 @@
-<img align="left" width="64" height="64" src="icon.svg">
+<img align="left" width="64" height="64" src="icons/icon.svg">
 <h1 class="rich-diff-level-zero">KillSwitch</h1>
 
 ![screenshot](screenshot.png?raw=true)
