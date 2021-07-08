@@ -15,8 +15,8 @@ public class KillSwitch.Application : Gtk.Application {
             gtk_settings.gtk_application_prefer_dark_theme = granite_settings.prefers_color_scheme == Granite.Settings.ColorScheme.DARK;
         });
 
-        var MainWin = new KillSwitch.MainWindow(this);
-        MainWin.show_all ();
+        var main_window = new KillSwitch.MainWindow(this);
+        main_window .show_all ();
     }
 
     public static int main (string[] args) {
