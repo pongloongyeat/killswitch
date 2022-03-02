@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=KillSwitch
+GenericName=Kill dock, wingpanel and apps
+Comment=Kills Running Processes
+Categories=Utility;System;
+Exec=com.github.pongloongyeat.killswitch
+Icon=application-default-icon
+Terminal=false
+Type=Application
+Keywords=Apps;Kill;Application;Applications;Close;Quit;
